@@ -1,3 +1,3 @@
 (ns asteroids-game.main)
 
-(print "hi")
+(print "hir")
