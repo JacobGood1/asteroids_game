@@ -11,41 +11,46 @@ import com.badlogic.gdx.graphics.OrthographicCamera;
  */
 public class Game implements ApplicationListener
 {
-    public static int HEIGHT;
-    public static int WIDTH;
+    public int HEIGHT;
+    public int WIDTH;
 
     OrthographicCamera camera;
-
+    InputProcessor inputProcessor;
     AFunction render_fn;
 
-    public OrthographicCamera getCamera() {
-        return camera;
-    }
 
-    public Game(AFunction render_fn)
+    public Game(AFunction render_fn, InputProcessor inputProcessor)
     {
         this.render_fn = render_fn;
+        camera = new OrthographicCamera();
+        this.inputProcessor = inputProcessor;
     }
 
-    public void init(OrthographicCamera cam, InputProcessor inputProcessor)
+    //for use when debug mode is enabled
+    public void reLoad(AFunction render_fn, OrthographicCamera camera, InputProcessor inputProcessor)
     {
-        WIDTH = Gdx.graphics.getWidth();
-        HEIGHT = Gdx.graphics.getHeight();
-        this.camera = cam;
-        Gdx.input.setInputProcessor(inputProcessor);
-        cam.translate(WIDTH / 2, HEIGHT / 2);
-        cam.update();
-    }
+        try
+        {
+            this.render_fn = render_fn;
+            this.camera = camera;
+            Gdx.input.setInputProcessor(inputProcessor);
+        }
+        catch(Exception e)
+        {
+            System.out.println(e.getMessage());
+        }
 
-    public void reLoad(AFunction render_fn)
-    {
-        this.render_fn = render_fn;
     }
 
     @Override
     public void create()
     {
+        WIDTH = Gdx.graphics.getWidth();
+        HEIGHT = Gdx.graphics.getHeight();
+        camera.translate(WIDTH / 2, HEIGHT / 2);
+        camera.update();
 
+        Gdx.input.setInputProcessor(inputProcessor);
     }
 
     @Override
@@ -71,5 +76,18 @@ public class Game implements ApplicationListener
     @Override
     public void dispose() {
 
+    }
+
+    //GETTERS
+    public int getHEIGHT() {
+        return HEIGHT;
+    }
+
+    public int getWIDTH() {
+        return WIDTH;
+    }
+
+    public OrthographicCamera getCamera() {
+        return camera;
     }
 }

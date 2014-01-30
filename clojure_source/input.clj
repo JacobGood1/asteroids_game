@@ -1,9 +1,13 @@
 (ns clojure-source.input
-  (:import (com.badlogic.gdx InputAdapter Input$Keys))
+  (:import (com.badlogic.gdx InputAdapter Input$Keys)
+           (java_source GLOBALS))
   (:require [clojure.reflect])
   (:use [clojure.core.match :only (match)]))
 
-(def to-map (comp (partial apply hash-map) flatten))
+
+
+(def to-map (comp (partial apply hash-map)
+                  flatten))
 
 (def input-keys
   (apply hash-map
@@ -30,24 +34,38 @@
   [k b]
   (swap! game-keys-current assoc k b))
 
-;tomm make a macro to detect all keys in input without coding it all
+(def exlusion-characters [\n \space \newline])
 
+
+
+      ;assume proxy is found, then use proxy processor try wrapper
 (def input-processor
-  (proxy [InputAdapter] []
+  (proxy [com.badlogic.gdx.InputAdapter] []
     (keyDown [key]
-      (match [(input-keys key)]
-             ['W] (set-key! key true)
-             ['A] (set-key! key true)
-             ['S] (set-key! key true)
-             ['D] (set-key! key true)
-             :else (println " dat ayze"))
+        (try
+            (match [(input-keys key)]
+                   ['W] (set-key! key true)
+                   ['A] (set-key! key true)
+                   ['S] (set-key! key true)
+                   ['D] (set-key! key true))
+        (catch Exception e (println (.getMessage e))))
       true)
     (keyUp [key]
-      (match [(input-keys key)]
-             ['W] (set-key! key false)
-             ['A] (set-key! key false)
-             ['S] (set-key! key false)
-             ['D] (set-key! key false)
-             :else (println "no match"))
+        (try
+            (match [(input-keys key)]
+                   ['W] (set-key! key false)
+                   ['A] (set-key! key false)
+                   ['S] (set-key! key false)
+                   ['D] (set-key! key false)
+                   :else (println "no match"))
+        (catch Exception e (println (.getMessage e))))
       true)))
+
+
+
+
+
+;tomm make a macro to detect all keys in input without coding it all
+
+
 

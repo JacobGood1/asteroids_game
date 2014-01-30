@@ -1,12 +1,11 @@
 (ns clojure-source.main
-  (:import (java_source Game AppConfig)
+  (:import (java_source Game AppConfig GLOBALS)
            (com.badlogic.gdx.backends.lwjgl LwjglApplication)
            (com.badlogic.gdx.graphics OrthographicCamera))
   (:require [clojure-source.input])
   (:use [clojure-source.open-gl-macros :only (gen-gl-fn-for-namespace)]))
 (gen-gl-fn-for-namespace)
 
-(def camera (OrthographicCamera.))
 
 (defn render
   []
@@ -16,11 +15,15 @@
                   :alpha 0)
   (gl-clear :primitive (GL_COLOR_BUFFER_BIT)))
 
-(def game (Game. render))
+
+(def camera (OrthographicCamera.))
+
+(def game (Game. render clojure-source.input/input-processor))
 
 
-(add-watch #'render :render-key (fn [key ref os ns]
-                                (.reLoad game render)))
+
+
 
 (LwjglApplication. game (AppConfig.))
-(.init game camera clojure-source.input/input-processor)
+
+
